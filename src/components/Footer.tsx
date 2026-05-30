@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Logo from './Logo'
 import { Github, Linkedin, Send, Check } from 'lucide-react'
 
@@ -167,6 +168,7 @@ export default function Footer() {
               <a href="#home" className="footer-link-item">Inicio</a>
               <a href="#methodology" className="footer-link-item">Metodología</a>
               <a href="#stats" className="footer-link-item">Valores Técnicos</a>
+              <Link to="/privacy" className="footer-link-item">Política de Privacidad</Link>
             </nav>
           </div>
 
