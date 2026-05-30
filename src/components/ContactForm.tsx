@@ -11,6 +11,7 @@ export default function ContactForm() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -32,15 +33,28 @@ export default function ContactForm() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
 
     setIsSubmitting(true)
+    setSubmitError(null)
     
-    // Simulate API Submission
-    setTimeout(() => {
-      setIsSubmitting(false)
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Ocurrió un error al enviar el formulario')
+      }
+      
       setIsSubmitted(true)
       setFormData({
         name: '',
@@ -48,7 +62,12 @@ export default function ContactForm() {
         projectType: 'Software a Medida',
         message: ''
       })
-    }, 1500)
+    } catch (err: any) {
+      console.error(err)
+      setSubmitError(err.message || 'Error de conexión. Por favor intenta de nuevo.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -210,6 +229,25 @@ export default function ContactForm() {
                   <span className="form-error-msg"><AlertCircle size={12} /> {errors.message}</span>
                 )}
               </div>
+
+              {submitError && (
+                <div style={{
+                  background: 'rgba(255, 138, 128, 0.1)',
+                  border: '1px solid #FF8A80',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.85rem 1.1rem',
+                  color: '#FF8A80',
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  marginTop: '1rem',
+                  marginBottom: '1rem'
+                }}>
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                  <span>{submitError}</span>
+                </div>
+              )}
 
               {/* Submit Button */}
               <button
