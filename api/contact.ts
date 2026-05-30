@@ -30,7 +30,7 @@ export default async function handler(req: any, res: any) {
 
     const { data, error } = await resend.emails.send({
       from: 'Neltuma Labs <onboarding@resend.dev>',
-      to: 'nicopozo+contact@gmail.com',
+      to: 'nicopozo@gmail.com',
       replyTo: email,
       subject: `Contacto [${projectType}]: ${name}`,
       html: `
